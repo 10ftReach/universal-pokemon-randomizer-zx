@@ -157,7 +157,7 @@ public abstract class AbstractRomHandler implements RomHandler {
                 onlyLegendaryList.add(p);
             } else if (p.isUltraBeast()) {
                 ultraBeastList.add(p);
-            } else {
+            } else if(p.bst2() <= 425) {
                 noLegendaryList.add(p);
             }
         }
