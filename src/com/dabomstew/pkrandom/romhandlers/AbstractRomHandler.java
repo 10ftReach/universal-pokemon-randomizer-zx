@@ -348,7 +348,7 @@ public abstract class AbstractRomHandler implements RomHandler {
 
     public Pokemon randomPokemon() {
         checkPokemonRestrictions();
-        return mainPokemonList.get(this.random.nextInt(mainPokemonList.size()));
+        return noLegendaryList.get(this.random.nextInt(noLegendaryList.size()));
     }
 
     @Override
@@ -5443,6 +5443,23 @@ public abstract class AbstractRomHandler implements RomHandler {
         } else {
             pokemonPool = new ArrayList<>(mainPokemonList);
         }
+
+        //bst cap
+        pokemonPool = new ArrayList<>(noLegendaryList);
+
+        // this stop pokemon that evolve into big mons from evolving.
+        for(Pokemon pk : pokemonPool)
+        {
+            if(pk.evolutionsFrom.size() > 0)
+            {
+                if(pk.evolutionsFrom.get(0).to.bst2() > 425)
+                {
+                    pk.evolutionsFrom.clear();
+                }
+
+            }
+        }
+
         List<Pokemon> actuallyCosmeticPokemonPool = new ArrayList<>();
         int stageLimit = limitToThreeStages ? 3 : 10;
 
@@ -5516,6 +5533,9 @@ public abstract class AbstractRomHandler implements RomHandler {
                                     .filter(pk -> !pk.actuallyCosmetic)
                                     .collect(Collectors.toList()) :
                             mainPokemonList;
+
+                    chosenList = noLegendaryList;
+
                     // Step 1: base filters
                     for (Pokemon pk : chosenList) {
                         // Prevent evolving into oneself (mandatory)
