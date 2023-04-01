@@ -144,6 +144,16 @@ public abstract class AbstractRomHandler implements RomHandler {
             }
         }
 
+        //just for testing bst cap.
+        // Only turn on for build you won't play as it messes up in game names, but reads well in the log
+        for(Pokemon pk : mainPokemonList)
+        {
+            if(!pk.name.contains("("))
+            {
+                //pk.name = pk.name + " (" + String.valueOf(pk.bst2()) + ")";
+            }
+        }
+
         noLegendaryList = new ArrayList<>();
         noLegendaryListInclFormes = new ArrayList<>();
         onlyLegendaryList = new ArrayList<>();
