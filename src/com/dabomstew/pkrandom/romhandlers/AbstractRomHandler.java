@@ -4258,7 +4258,7 @@ public abstract class AbstractRomHandler implements RomHandler {
                             .stream()
                             .filter(pk -> !pk.actuallyCosmetic)
                             .collect(Collectors.toList());
-            List<Pokemon> pokemonLeft = new ArrayList<>(!allowAltFormes ? mainPokemonList : listInclFormesExclCosmetics);
+            List<Pokemon> pokemonLeft = new ArrayList<>(!allowAltFormes ? noLegendaryList : listInclFormesExclCosmetics);
             pokemonLeft.removeAll(banned);
 
             List<Pokemon> pokemonPool = new ArrayList<>(pokemonLeft);
