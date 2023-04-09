@@ -361,7 +361,7 @@ public abstract class AbstractRomHandler implements RomHandler {
         }
     }
 
-    public Pokemon randomPokemonFromList(List<Pokemon> selectedList) {
+    public Pokemon getRandomPokemonFromList(List<Pokemon> selectedList) {
         checkPokemonRestrictions();
 
         //check if maxBSt setting is being used
@@ -386,7 +386,7 @@ public abstract class AbstractRomHandler implements RomHandler {
     public Pokemon randomPokemon() {
         //checkPokemonRestrictions();
         //return noLegendaryList.get(this.random.nextInt(noLegendaryList.size()));
-        return randomPokemonFromList(mainPokemonList);
+        return getRandomPokemonFromList(mainPokemonList);
     }
 
     //why is this an override? and why is randomPokemon() not? both are defined empty in the parent class and only redefined here
@@ -394,27 +394,27 @@ public abstract class AbstractRomHandler implements RomHandler {
     public Pokemon randomPokemonInclFormes() {
         //checkPokemonRestrictions();
         //return mainPokemonListInclFormes.get(this.random.nextInt(mainPokemonListInclFormes.size()));
-        return randomPokemonFromList(mainPokemonListInclFormes);
+        return getRandomPokemonFromList(mainPokemonListInclFormes);
     }
 
     @Override
     public Pokemon randomNonLegendaryPokemon() {
         //checkPokemonRestrictions();
         //return noLegendaryList.get(this.random.nextInt(noLegendaryList.size()));
-        return randomPokemonFromList(noLegendaryList);
+        return getRandomPokemonFromList(noLegendaryList);
     }
 
     private Pokemon randomNonLegendaryPokemonInclFormes() {
         //checkPokemonRestrictions();
         //return noLegendaryListInclFormes.get(this.random.nextInt(noLegendaryListInclFormes.size()));
-        return randomPokemonFromList(noLegendaryListInclFormes);
+        return getRandomPokemonFromList(noLegendaryListInclFormes);
     }
 
     @Override
     public Pokemon randomLegendaryPokemon() {
         //checkPokemonRestrictions();
         //return onlyLegendaryList.get(this.random.nextInt(onlyLegendaryList.size()));
-        return randomPokemonFromList(onlyLegendaryList);
+        return getRandomPokemonFromList(onlyLegendaryList);
     }
 
     private List<Pokemon> twoEvoPokes;
@@ -5487,7 +5487,7 @@ public abstract class AbstractRomHandler implements RomHandler {
             pokemonPool = new ArrayList<>(mainPokemonList);
         }
 
-        // this stop pokemon that evolve into big mons from evolving if they exceed the maxBST.
+        // this stops pokemon that evolve into big mons from evolving if they exceed the maxBST.
         if(maxBST != -1)
         {
             for(Pokemon pk : pokemonPool)
@@ -5612,6 +5612,12 @@ public abstract class AbstractRomHandler implements RomHandler {
 
                         // Prevent evolution that causes cycle (mandatory)
                         if (evoCycleCheck(fromPK, pk)) {
+                            continue;
+                        }
+
+                        // Prevent evolution into a forbidden BST
+                        if(pk.getBST() > maxBST)
+                        {
                             continue;
                         }
 
@@ -6982,18 +6988,22 @@ public abstract class AbstractRomHandler implements RomHandler {
                 if (filteredPickList.isEmpty()) {
                     filteredPickList = canPick;
                 }
-                chosenPokemon = filteredPickList.get(this.random.nextInt(filteredPickList.size()));
+                //chosenPokemon = filteredPickList.get(this.random.nextInt(filteredPickList.size()));
+                chosenPokemon = getRandomPokemonFromList(filteredPickList);
             }
             return chosenPokemon;
         } else {
             if (wonderGuardAllowed) {
-                return pickFrom.get(this.random.nextInt(pickFrom.size()));
+                //return pickFrom.get(this.random.nextInt(pickFrom.size()));
+                return getRandomPokemonFromList(pickFrom);
             } else {
-                Pokemon pk = pickFrom.get(this.random.nextInt(pickFrom.size()));
+                //Pokemon pk = pickFrom.get(this.random.nextInt(pickFrom.size()));
+                Pokemon pk = getRandomPokemonFromList(pickFrom);
                 while (pk.ability1 == Abilities.wonderGuard
                         || pk.ability2 == Abilities.wonderGuard
                         || pk.ability3 == Abilities.wonderGuard) {
-                    pk = pickFrom.get(this.random.nextInt(pickFrom.size()));
+                    pk = getRandomPokemonFromList(pickFrom);
+                    //pk = pickFrom.get(this.random.nextInt(pickFrom.size()));
                 }
                 return pk;
             }
