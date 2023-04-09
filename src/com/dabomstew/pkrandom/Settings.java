@@ -314,6 +314,8 @@ public class Settings {
         UNCHANGED, RANDOM
     }
 
+    private int maxBST = 425; //set to 780+ by default
+
     private PickupItemsMod pickupItemsMod = PickupItemsMod.UNCHANGED;
     private boolean banBadRandomPickupItems;
 
@@ -2302,6 +2304,16 @@ public class Settings {
 
     public void setBanBadRandomPickupItems(boolean banBadRandomPickupItems) {
         this.banBadRandomPickupItems = banBadRandomPickupItems;
+    }
+
+    public void setMaxBst(int maxBST)
+    {
+        this.maxBST = maxBST;
+    }
+
+    public int getMaxBST()
+    {
+        return maxBST;
     }
 
     private static int makeByteSelected(boolean... bools) {

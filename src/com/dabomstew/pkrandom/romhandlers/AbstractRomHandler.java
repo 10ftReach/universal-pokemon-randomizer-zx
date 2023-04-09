@@ -59,6 +59,8 @@ public abstract class AbstractRomHandler implements RomHandler {
     boolean isSM = false;
     int perfectAccuracy = 100;
 
+    private int maxBST = -1;
+
     /* Constructor */
 
     public AbstractRomHandler(Random random, PrintStream logStream) {
@@ -86,6 +88,9 @@ public abstract class AbstractRomHandler implements RomHandler {
                 restrictions = null;
             }
         }
+
+        //double check if this is the appropriate place to set this
+        maxBST = settings.getMaxBST();
 
         restrictionsSet = true;
         mainPokemonList = this.allPokemonWithoutNull();
@@ -150,7 +155,7 @@ public abstract class AbstractRomHandler implements RomHandler {
         {
             if(!pk.name.contains("("))
             {
-                //pk.name = pk.name + " (" + String.valueOf(pk.bst2()) + ")";
+                //pk.name = pk.name + " (" + String.valueOf(pk.getBST()) + ")";
             }
         }
 
@@ -167,7 +172,7 @@ public abstract class AbstractRomHandler implements RomHandler {
                 onlyLegendaryList.add(p);
             } else if (p.isUltraBeast()) {
                 ultraBeastList.add(p);
-            } else if(p.bst2() <= 425) {
+            } else {
                 noLegendaryList.add(p);
             }
         }
@@ -356,32 +361,60 @@ public abstract class AbstractRomHandler implements RomHandler {
         }
     }
 
-    public Pokemon randomPokemon() {
+    public Pokemon randomPokemonFromList(List<Pokemon> selectedList) {
         checkPokemonRestrictions();
-        return noLegendaryList.get(this.random.nextInt(noLegendaryList.size()));
+
+        //check if maxBSt setting is being used
+        if(maxBST != -1)
+        {
+            boolean pokemonIsUnderMaxBST = false;
+            Pokemon randomPokemon = null;
+
+            //TODO:if BST is lower than lowest in game, this will be an infinite loop. fix that
+            while(!pokemonIsUnderMaxBST){
+                randomPokemon =  selectedList.get(this.random.nextInt(selectedList.size()));
+
+                pokemonIsUnderMaxBST = randomPokemon.getBST() <= maxBST;
+            }
+
+            return randomPokemon;
+        }
+
+        return selectedList.get(this.random.nextInt(selectedList.size()));
     }
 
+    public Pokemon randomPokemon() {
+        //checkPokemonRestrictions();
+        //return noLegendaryList.get(this.random.nextInt(noLegendaryList.size()));
+        return randomPokemonFromList(mainPokemonList);
+    }
+
+    //why is this an override? and why is randomPokemon() not? both are defined empty in the parent class and only redefined here
     @Override
     public Pokemon randomPokemonInclFormes() {
-        checkPokemonRestrictions();
-        return mainPokemonListInclFormes.get(this.random.nextInt(mainPokemonListInclFormes.size()));
+        //checkPokemonRestrictions();
+        //return mainPokemonListInclFormes.get(this.random.nextInt(mainPokemonListInclFormes.size()));
+        return randomPokemonFromList(mainPokemonListInclFormes);
     }
 
     @Override
     public Pokemon randomNonLegendaryPokemon() {
-        checkPokemonRestrictions();
-        return noLegendaryList.get(this.random.nextInt(noLegendaryList.size()));
+        //checkPokemonRestrictions();
+        //return noLegendaryList.get(this.random.nextInt(noLegendaryList.size()));
+        return randomPokemonFromList(noLegendaryList);
     }
 
     private Pokemon randomNonLegendaryPokemonInclFormes() {
-        checkPokemonRestrictions();
-        return noLegendaryListInclFormes.get(this.random.nextInt(noLegendaryListInclFormes.size()));
+        //checkPokemonRestrictions();
+        //return noLegendaryListInclFormes.get(this.random.nextInt(noLegendaryListInclFormes.size()));
+        return randomPokemonFromList(noLegendaryListInclFormes);
     }
 
     @Override
     public Pokemon randomLegendaryPokemon() {
-        checkPokemonRestrictions();
-        return onlyLegendaryList.get(this.random.nextInt(onlyLegendaryList.size()));
+        //checkPokemonRestrictions();
+        //return onlyLegendaryList.get(this.random.nextInt(onlyLegendaryList.size()));
+        return randomPokemonFromList(onlyLegendaryList);
     }
 
     private List<Pokemon> twoEvoPokes;
@@ -4258,7 +4291,7 @@ public abstract class AbstractRomHandler implements RomHandler {
                             .stream()
                             .filter(pk -> !pk.actuallyCosmetic)
                             .collect(Collectors.toList());
-            List<Pokemon> pokemonLeft = new ArrayList<>(!allowAltFormes ? noLegendaryList : listInclFormesExclCosmetics);
+            List<Pokemon> pokemonLeft = new ArrayList<>(!allowAltFormes ? mainPokemonList : listInclFormesExclCosmetics);
             pokemonLeft.removeAll(banned);
 
             List<Pokemon> pokemonPool = new ArrayList<>(pokemonLeft);
@@ -5454,19 +5487,23 @@ public abstract class AbstractRomHandler implements RomHandler {
             pokemonPool = new ArrayList<>(mainPokemonList);
         }
 
-        //bst cap
-        pokemonPool = new ArrayList<>(noLegendaryList);
-
-        // this stop pokemon that evolve into big mons from evolving.
-        for(Pokemon pk : pokemonPool)
+        // this stop pokemon that evolve into big mons from evolving if they exceed the maxBST.
+        if(maxBST != -1)
         {
-            if(pk.evolutionsFrom.size() > 0)
+            for(Pokemon pk : pokemonPool)
             {
-                if(pk.evolutionsFrom.get(0).to.bst2() > 425)
+                //is this an evolved mon
+                if(pk.evolutionsFrom.size() > 0)
                 {
-                    pk.evolutionsFrom.clear();
+                    for (int i = 0; i < pk.evolutionsFrom.size(); i++)
+                    {
+                        //is it's BST too high
+                        if(pk.evolutionsFrom.get(i).to.getBST() > settings.getMaxBST())
+                        {
+                            pk.evolutionsFrom.clear();
+                        }
+                    }
                 }
-
             }
         }
 
@@ -5543,8 +5580,6 @@ public abstract class AbstractRomHandler implements RomHandler {
                                     .filter(pk -> !pk.actuallyCosmetic)
                                     .collect(Collectors.toList()) :
                             mainPokemonList;
-
-                    chosenList = noLegendaryList;
 
                     // Step 1: base filters
                     for (Pokemon pk : chosenList) {
