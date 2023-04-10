@@ -300,6 +300,16 @@ public class NewRandomizerGUI {
     private JCheckBox paEnsureTwoAbilitiesCheckbox;
     private JCheckBox miscUpdateRotomFormeTypingCheckBox;
     private JCheckBox miscDisableLowHPMusicCheckBox;
+    private JLabel miscMaxStarterBSTLabel;
+    private JSpinner miscMaxStarterBSTSpinner;
+    private JLabel miscMaxStaticBSTLabel;
+    private JSpinner miscMaxStaticBSTSpinner;
+    private JLabel miscMaxWildBSTLabel;
+    private JSpinner miscMaxWildBSTSpinner;
+    private JLabel miscMaxTrainerBSTLabel;
+    private JSpinner miscMaxTrainerBSTSpinner;
+    private JLabel miscMaxEvoBSTLabel;
+    private JSpinner miscMaxEvoBSTSpinner;
 
     private static JFrame frame;
 
@@ -1683,6 +1693,12 @@ public class NewRandomizerGUI {
         puRandomRadioButton.setSelected(settings.getPickupItemsMod() == Settings.PickupItemsMod.RANDOM);
         puBanBadItemsCheckBox.setSelected(settings.isBanBadRandomPickupItems());
 
+        miscMaxStarterBSTSpinner.setValue(settings.getMaxStarterBST() > 0 ? settings.getMaxStarterBST() : -1);
+        miscMaxStaticBSTSpinner.setValue(settings.getMaxStaticBST() > 0 ? settings.getMaxStaticBST() : -1);
+        miscMaxTrainerBSTSpinner.setValue(settings.getMaxTrainerBST() > 0 ? settings.getMaxTrainerBST() : -1);
+        miscMaxWildBSTSpinner.setValue(settings.getMaxWildBST() > 0 ? settings.getMaxWildBST() : -1);
+        miscMaxEvoBSTSpinner.setValue(settings.getMaxEvoBST() > 0 ? settings.getMaxEvoBST() : -1);
+
         int mtsSelected = settings.getCurrentMiscTweaks();
         int mtCount = MiscTweak.allTweaks.size();
 
@@ -1879,6 +1895,12 @@ public class NewRandomizerGUI {
 
         settings.setPickupItemsMod(puUnchangedRadioButton.isSelected(), puRandomRadioButton.isSelected());
         settings.setBanBadRandomPickupItems(puBanBadItemsCheckBox.isSelected());
+
+        settings.setMaxStarterBST(miscMaxStarterBSTSpinner.isVisible() && (int) miscMaxStarterBSTSpinner.getValue() > 0 ? (int) miscMaxStarterBSTSpinner.getValue() : -1);
+        settings.setMaxStaticBST(miscMaxStaticBSTSpinner.isVisible() && (int) miscMaxStaticBSTSpinner.getValue() > 0 ? (int) miscMaxStaticBSTSpinner.getValue() : -1);
+        settings.setMaxWildBST(miscMaxWildBSTSpinner.isVisible() && (int) miscMaxWildBSTSpinner.getValue() > 0 ? (int) miscMaxWildBSTSpinner.getValue() : -1);
+        settings.setMaxTrainerBST(miscMaxTrainerBSTSpinner.isVisible() && (int) miscMaxTrainerBSTSpinner.getValue() > 0 ? (int) miscMaxTrainerBSTSpinner.getValue() : -1);
+        settings.setMaxEvoBST(miscMaxEvoBSTSpinner.isVisible() && (int) miscMaxEvoBSTSpinner.getValue() > 0 ? (int) miscMaxEvoBSTSpinner.getValue() : -1);
 
         int currentMiscTweaks = 0;
         int mtCount = MiscTweak.allTweaks.size();
@@ -2650,6 +2672,30 @@ public class NewRandomizerGUI {
         miscBanBigMoneyManiacCheckBox.setSelected(false);
         mtNoExistLabel.setVisible(false);
         mtNoneAvailableLabel.setVisible(false);
+        miscMaxStarterBSTSpinner.setVisible(true);
+        miscMaxStarterBSTSpinner.setEnabled(true);
+        miscMaxStarterBSTSpinner.setValue(-1);
+        miscMaxStarterBSTLabel.setVisible(true);
+
+        miscMaxStaticBSTSpinner.setVisible(true);
+        miscMaxStaticBSTSpinner.setEnabled(true);
+        miscMaxStaticBSTSpinner.setValue(-1);
+        miscMaxStaticBSTLabel.setVisible(true);
+
+        miscMaxTrainerBSTSpinner.setVisible(true);
+        miscMaxTrainerBSTSpinner.setEnabled(true);
+        miscMaxTrainerBSTSpinner.setValue(-1);
+        miscMaxTrainerBSTLabel.setVisible(true);
+
+        miscMaxWildBSTSpinner.setVisible(true);
+        miscMaxWildBSTSpinner.setEnabled(true);
+        miscMaxWildBSTSpinner.setValue(-1);
+        miscMaxWildBSTLabel.setVisible(true);
+
+        miscMaxEvoBSTSpinner.setVisible(true);
+        miscMaxEvoBSTSpinner.setEnabled(true);
+        miscMaxEvoBSTSpinner.setValue(-1);
+        miscMaxEvoBSTLabel.setVisible(true);
 
         liveTweaksPanel.setVisible(false);
         miscTweaksPanel.setVisible(true);

@@ -314,7 +314,11 @@ public class Settings {
         UNCHANGED, RANDOM
     }
 
-    private int maxBST = 425; //set to 780+ by default
+    private int maxStarterBST = -1;
+    private int maxStaticBST = -1;
+    private int maxTrainerBST = -1;
+    private int maxWildBST = -1;
+    private int maxEvoBST = -1;
 
     private PickupItemsMod pickupItemsMod = PickupItemsMod.UNCHANGED;
     private boolean banBadRandomPickupItems;
@@ -2306,14 +2310,54 @@ public class Settings {
         this.banBadRandomPickupItems = banBadRandomPickupItems;
     }
 
-    public void setMaxBst(int maxBST)
+    public void setMaxStarterBST(int maxStarterBST)
     {
-        this.maxBST = maxBST;
+        this.maxStarterBST = maxStarterBST;
     }
 
-    public int getMaxBST()
+    public int getMaxStarterBST()
     {
-        return maxBST;
+        return maxStarterBST;
+    }
+
+    public void setMaxStaticBST(int maxStaticBST)
+    {
+        this.maxStaticBST = maxStaticBST;
+    }
+
+    public int getMaxStaticBST()
+    {
+        return maxStaticBST;
+    }
+
+    public void setMaxTrainerBST(int maxTrainerBST)
+    {
+        this.maxTrainerBST = maxTrainerBST;
+    }
+
+    public int getMaxTrainerBST()
+    {
+        return maxTrainerBST;
+    }
+
+    public void setMaxWildBST(int maxWildBST)
+    {
+        this.maxWildBST = maxWildBST;
+    }
+
+    public int getMaxWildBST()
+    {
+        return maxWildBST;
+    }
+
+    public void setMaxEvoBST(int maxEvoBST)
+    {
+        this.maxEvoBST = maxEvoBST;
+    }
+
+    public int getMaxEvoBST()
+    {
+        return maxEvoBST;
     }
 
     private static int makeByteSelected(boolean... bools) {

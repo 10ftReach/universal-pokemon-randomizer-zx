@@ -94,11 +94,11 @@ public abstract class AbstractRomHandler implements RomHandler {
         }
 
         //double check if this is the appropriate place to set this. also set them all properly
-        maxStaticBST = settings.getMaxBST();
-        maxStarterBST = settings.getMaxBST();
-        maxWildBST = settings.getMaxBST();
-        maxTrainerBST = settings.getMaxBST();
-        maxEvoBST = maxTrainerBST;
+        maxStaticBST = settings.getMaxStaticBST();
+        maxStarterBST = settings.getMaxStarterBST();
+        maxWildBST = settings.getMaxWildBST();
+        maxTrainerBST = settings.getMaxTrainerBST();
+        maxEvoBST = settings.getMaxEvoBST();
 
         restrictionsSet = true;
         mainPokemonList = this.allPokemonWithoutNull();
