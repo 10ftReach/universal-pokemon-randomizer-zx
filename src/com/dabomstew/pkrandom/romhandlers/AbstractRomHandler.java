@@ -59,11 +59,11 @@ public abstract class AbstractRomHandler implements RomHandler {
     boolean isSM = false;
     int perfectAccuracy = 100;
 
-    private int maxStaticBST = -1;
-    private int maxWildBST = -1;
-    private int maxStarterBST = -1;
-    private int maxTrainerBST = -1;
-    private int maxEvoBST = -1;
+    private int maxStaticBST = 0;
+    private int maxWildBST = 0;
+    private int maxStarterBST = 0;
+    private int maxTrainerBST = 0;
+    private int maxEvoBST = 0;
 
     /* Constructor */
 
@@ -99,6 +99,15 @@ public abstract class AbstractRomHandler implements RomHandler {
         maxWildBST = settings.getMaxWildBST();
         maxTrainerBST = settings.getMaxTrainerBST();
         maxEvoBST = settings.getMaxEvoBST();
+
+
+        log("--BST Restrictions-- ");
+        log("Maximum BST of Starter Pokemon: " + String.valueOf(maxStarterBST));
+        log("Maximum BST of Wild Pokemon: " + String.valueOf(maxWildBST));
+        log("Maximum BST of Trainer Pokemon: " + String.valueOf(maxTrainerBST));
+        log("Maximum BST of Evo Pokemon: " + String.valueOf(maxEvoBST));
+        log("Maximum BST of Static Pokemon: " + String.valueOf(maxStaticBST));
+        log("");
 
         restrictionsSet = true;
         mainPokemonList = this.allPokemonWithoutNull();
@@ -159,6 +168,7 @@ public abstract class AbstractRomHandler implements RomHandler {
 
         //just for testing bst cap.
         // Only turn on for build you won't play as it messes up in game names, but reads well in the log
+        /*
         for(Pokemon pk : mainPokemonList)
         {
             if(!pk.name.contains("("))
@@ -166,7 +176,7 @@ public abstract class AbstractRomHandler implements RomHandler {
                 pk.name = pk.name + " (" + String.valueOf(pk.getBST()) + ")";
             }
         }
-
+        */
         noLegendaryList = new ArrayList<>();
         noLegendaryListInclFormes = new ArrayList<>();
         onlyLegendaryList = new ArrayList<>();

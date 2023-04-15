@@ -1693,11 +1693,12 @@ public class NewRandomizerGUI {
         puRandomRadioButton.setSelected(settings.getPickupItemsMod() == Settings.PickupItemsMod.RANDOM);
         puBanBadItemsCheckBox.setSelected(settings.isBanBadRandomPickupItems());
 
-        miscMaxStarterBSTSpinner.setValue(settings.getMaxStarterBST() > 0 ? settings.getMaxStarterBST() : -1);
-        miscMaxStaticBSTSpinner.setValue(settings.getMaxStaticBST() > 0 ? settings.getMaxStaticBST() : -1);
-        miscMaxTrainerBSTSpinner.setValue(settings.getMaxTrainerBST() > 0 ? settings.getMaxTrainerBST() : -1);
-        miscMaxWildBSTSpinner.setValue(settings.getMaxWildBST() > 0 ? settings.getMaxWildBST() : -1);
-        miscMaxEvoBSTSpinner.setValue(settings.getMaxEvoBST() > 0 ? settings.getMaxEvoBST() : -1);
+        //TODO change the 0 to the lowest BST in Seed. Randomiser gets stuck in loop if all pokemon are eliminated
+        miscMaxStarterBSTSpinner.setValue(settings.getMaxStarterBST() > 0 ? settings.getMaxStarterBST() : 0);
+        miscMaxStaticBSTSpinner.setValue(settings.getMaxStaticBST() > 0 ? settings.getMaxStaticBST() : 0);
+        miscMaxTrainerBSTSpinner.setValue(settings.getMaxTrainerBST() > 0 ? settings.getMaxTrainerBST() : 0);
+        miscMaxWildBSTSpinner.setValue(settings.getMaxWildBST() > 0 ? settings.getMaxWildBST() : 0);
+        miscMaxEvoBSTSpinner.setValue(settings.getMaxEvoBST() > 0 ? settings.getMaxEvoBST() : 0);
 
         int mtsSelected = settings.getCurrentMiscTweaks();
         int mtCount = MiscTweak.allTweaks.size();
@@ -1896,11 +1897,12 @@ public class NewRandomizerGUI {
         settings.setPickupItemsMod(puUnchangedRadioButton.isSelected(), puRandomRadioButton.isSelected());
         settings.setBanBadRandomPickupItems(puBanBadItemsCheckBox.isSelected());
 
-        settings.setMaxStarterBST(miscMaxStarterBSTSpinner.isVisible() && (int) miscMaxStarterBSTSpinner.getValue() > 0 ? (int) miscMaxStarterBSTSpinner.getValue() : -1);
-        settings.setMaxStaticBST(miscMaxStaticBSTSpinner.isVisible() && (int) miscMaxStaticBSTSpinner.getValue() > 0 ? (int) miscMaxStaticBSTSpinner.getValue() : -1);
-        settings.setMaxWildBST(miscMaxWildBSTSpinner.isVisible() && (int) miscMaxWildBSTSpinner.getValue() > 0 ? (int) miscMaxWildBSTSpinner.getValue() : -1);
-        settings.setMaxTrainerBST(miscMaxTrainerBSTSpinner.isVisible() && (int) miscMaxTrainerBSTSpinner.getValue() > 0 ? (int) miscMaxTrainerBSTSpinner.getValue() : -1);
-        settings.setMaxEvoBST(miscMaxEvoBSTSpinner.isVisible() && (int) miscMaxEvoBSTSpinner.getValue() > 0 ? (int) miscMaxEvoBSTSpinner.getValue() : -1);
+        //TODO change the 0 to the lowest BST in Seed. Randomiser gets stuck in loop if all pokemon are eliminated
+        settings.setMaxStarterBST(miscMaxStarterBSTSpinner.isVisible() && (int) miscMaxStarterBSTSpinner.getValue() > 0 ? (int) miscMaxStarterBSTSpinner.getValue() : 0);
+        settings.setMaxStaticBST(miscMaxStaticBSTSpinner.isVisible() && (int) miscMaxStaticBSTSpinner.getValue() > 0 ? (int) miscMaxStaticBSTSpinner.getValue() : 0);
+        settings.setMaxWildBST(miscMaxWildBSTSpinner.isVisible() && (int) miscMaxWildBSTSpinner.getValue() > 0 ? (int) miscMaxWildBSTSpinner.getValue() : 0);
+        settings.setMaxTrainerBST(miscMaxTrainerBSTSpinner.isVisible() && (int) miscMaxTrainerBSTSpinner.getValue() > 0 ? (int) miscMaxTrainerBSTSpinner.getValue() : 0);
+        settings.setMaxEvoBST(miscMaxEvoBSTSpinner.isVisible() && (int) miscMaxEvoBSTSpinner.getValue() > 0 ? (int) miscMaxEvoBSTSpinner.getValue() : 0);
 
         int currentMiscTweaks = 0;
         int mtCount = MiscTweak.allTweaks.size();
