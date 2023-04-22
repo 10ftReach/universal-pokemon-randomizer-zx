@@ -945,7 +945,7 @@ public class Settings {
 
                 BSTCounter = BSTCounter + (data[currentDataIndex] < 0 ? data[currentDataIndex] + 256 : data[currentDataIndex]);
             }
-            
+
             switch(i)
             {
                 case 0:
