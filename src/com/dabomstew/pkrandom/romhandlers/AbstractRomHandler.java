@@ -59,11 +59,11 @@ public abstract class AbstractRomHandler implements RomHandler {
     boolean isSM = false;
     int perfectAccuracy = 100;
 
-    private int maxStaticBST = 0;
-    private int maxWildBST = 0;
-    private int maxStarterBST = 0;
-    private int maxTrainerBST = 0;
-    private int maxEvoBST = 0;
+    private int maxStaticBST = 1000;
+    private int maxWildBST = 1000;
+    private int maxStarterBST = 1000;
+    private int maxTrainerBST = 1000;
+    private int maxEvoBST = 1000;
 
     /* Constructor */
 
@@ -380,60 +380,62 @@ public abstract class AbstractRomHandler implements RomHandler {
     }
 
     public Pokemon getRandomPokemonFromList(List<Pokemon> selectedList) {
+        return getRandomPokemonFromList(selectedList, 1000);
+    }
+    public Pokemon getRandomPokemonFromList(List<Pokemon> selectedList, int BSTRestriction) {
         checkPokemonRestrictions();
 
-        //TODO:set up override to include an int for the specific bst cap
         //check if maxBSt setting is being used
-        if(maxWildBST != -1)
-        {
-            boolean pokemonIsUnderMaxBST = false;
-            Pokemon randomPokemon = null;
 
-            //TODO:if BST is lower than lowest in game, this will be an infinite loop. fix that
-            while(!pokemonIsUnderMaxBST){
-                randomPokemon =  selectedList.get(this.random.nextInt(selectedList.size()));
+        boolean pokemonIsUnderMaxBST = false;
+        Pokemon randomPokemon = null;
 
-                pokemonIsUnderMaxBST = randomPokemon.getBST() <= maxWildBST;
-            }
-
-            return randomPokemon;
+        //TODO:if BST is lower than lowest in game, this will be an infinite loop. fix that
+        while(!pokemonIsUnderMaxBST){
+            randomPokemon =  selectedList.get(this.random.nextInt(selectedList.size()));
+            pokemonIsUnderMaxBST = randomPokemon.getBST() <= BSTRestriction;
         }
 
-        return selectedList.get(this.random.nextInt(selectedList.size()));
+        return randomPokemon;
     }
 
     public Pokemon randomPokemon() {
-        //checkPokemonRestrictions();
-        //return noLegendaryList.get(this.random.nextInt(noLegendaryList.size()));
         return getRandomPokemonFromList(mainPokemonList);
+    }
+    public Pokemon randomPokemon(int BSTRestriction) {
+        return getRandomPokemonFromList(mainPokemonList, BSTRestriction);
     }
 
     //why is this an override? and why is randomPokemon() not? both are defined empty in the parent class and only redefined here
     @Override
     public Pokemon randomPokemonInclFormes() {
-        //checkPokemonRestrictions();
-        //return mainPokemonListInclFormes.get(this.random.nextInt(mainPokemonListInclFormes.size()));
         return getRandomPokemonFromList(mainPokemonListInclFormes);
+    }
+    public Pokemon randomPokemonInclFormes(int BSTRestriction) {
+        return getRandomPokemonFromList(mainPokemonListInclFormes, BSTRestriction);
     }
 
     @Override
     public Pokemon randomNonLegendaryPokemon() {
-        //checkPokemonRestrictions();
-        //return noLegendaryList.get(this.random.nextInt(noLegendaryList.size()));
         return getRandomPokemonFromList(noLegendaryList);
+    }
+    public Pokemon randomNonLegendaryPokemon(int BSTRestriction) {
+        return getRandomPokemonFromList(noLegendaryList, BSTRestriction);
     }
 
     private Pokemon randomNonLegendaryPokemonInclFormes() {
-        //checkPokemonRestrictions();
-        //return noLegendaryListInclFormes.get(this.random.nextInt(noLegendaryListInclFormes.size()));
         return getRandomPokemonFromList(noLegendaryListInclFormes);
+    }
+    private Pokemon randomNonLegendaryPokemonInclFormes(int BSTRestriction) {
+        return getRandomPokemonFromList(noLegendaryListInclFormes, BSTRestriction);
     }
 
     @Override
     public Pokemon randomLegendaryPokemon() {
-        //checkPokemonRestrictions();
-        //return onlyLegendaryList.get(this.random.nextInt(onlyLegendaryList.size()));
         return getRandomPokemonFromList(onlyLegendaryList);
+    }
+    public Pokemon randomLegendaryPokemon(int BSTRestriction) {
+        return getRandomPokemonFromList(onlyLegendaryList, BSTRestriction);
     }
 
     private List<Pokemon> twoEvoPokes;
@@ -748,6 +750,7 @@ public abstract class AbstractRomHandler implements RomHandler {
         boolean allowAltFormes = settings.isAllowWildAltFormes();
         boolean banIrregularAltFormes = settings.isBanIrregularAltFormes();
         boolean abilitiesAreRandomized = settings.getAbilitiesMod() == Settings.AbilitiesMod.RANDOMIZE;
+        int BSTRestriction = maxWildBST;
 
         List<EncounterSet> currentEncounters = this.getEncounters(useTimeOfDay);
 
@@ -930,7 +933,7 @@ public abstract class AbstractRomHandler implements RomHandler {
             // Entirely random
             for (EncounterSet area : scrambledEncounters) {
                 for (Encounter enc : area.encounters) {
-                    enc.pokemon = pickEntirelyRandomPokemon(allowAltFormes, noLegendaries, area, banned);
+                    enc.pokemon = pickEntirelyRandomPokemon(allowAltFormes, noLegendaries, area, banned, BSTRestriction);
                     setFormeForEncounter(enc, enc.pokemon);
                 }
             }
@@ -972,6 +975,7 @@ public abstract class AbstractRomHandler implements RomHandler {
         boolean allowAltFormes = settings.isAllowWildAltFormes();
         boolean banIrregularAltFormes = settings.isBanIrregularAltFormes();
         boolean abilitiesAreRandomized = settings.getAbilitiesMod() == Settings.AbilitiesMod.RANDOMIZE;
+        int BSTRestriction = maxWildBST;
 
         checkPokemonRestrictions();
         List<Pokemon> banned = this.bannedForWildEncounters();
@@ -1028,12 +1032,14 @@ public abstract class AbstractRomHandler implements RomHandler {
                         if (tempPickable.size() == 0) {
                             throw new RandomizationException("ERROR: Couldn't replace a wild Pokemon!");
                         }
-                        int picked = this.random.nextInt(tempPickable.size());
-                        Pokemon pickedMN = tempPickable.get(picked);
+                        //int picked = this.random.nextInt(tempPickable.size());
+                        //Pokemon pickedMN = tempPickable.get(picked);
+                        Pokemon pickedMN = getRandomPokemonFromList(tempPickable, BSTRestriction);
                         areaMap.put(areaPk, pickedMN);
                     } else {
-                        int picked = this.random.nextInt(allPokes.size());
-                        Pokemon pickedMN = allPokes.get(picked);
+                        //int picked = this.random.nextInt(allPokes.size());
+                        //Pokemon pickedMN = allPokes.get(picked);
+                        Pokemon pickedMN = getRandomPokemonFromList(allPokes, BSTRestriction);
                         areaMap.put(areaPk, pickedMN);
                         pickablePokemon.remove(pickedMN);
                         if (allPokes != pickablePokemon) {
@@ -1099,14 +1105,17 @@ public abstract class AbstractRomHandler implements RomHandler {
                 // Build area map using type theme.
                 Map<Pokemon, Pokemon> areaMap = new TreeMap<>();
                 for (Pokemon areaPk : inArea) {
-                    int picked = this.random.nextInt(possiblePokemon.size());
-                    Pokemon pickedMN = possiblePokemon.get(picked);
+                    //int picked = this.random.nextInt(possiblePokemon.size());
+                    //Pokemon pickedMN = possiblePokemon.get(picked);
+                    Pokemon pickedMN = getRandomPokemonFromList(possiblePokemon, BSTRestriction);
                     while (pickedMN.actuallyCosmetic) {
-                        picked = this.random.nextInt(possiblePokemon.size());
-                        pickedMN = possiblePokemon.get(picked);
+                        //picked = this.random.nextInt(possiblePokemon.size());
+                        //pickedMN = possiblePokemon.get(picked);
+                        pickedMN = getRandomPokemonFromList(possiblePokemon, BSTRestriction);
                     }
                     areaMap.put(areaPk, pickedMN);
-                    possiblePokemon.remove(picked);
+                    //possiblePokemon.remove(picked);
+                    possiblePokemon.remove(pickedMN);
                 }
                 for (Encounter enc : area.encounters) {
                     // Apply the map
@@ -1136,9 +1145,9 @@ public abstract class AbstractRomHandler implements RomHandler {
                     localAllowed.removeAll(area.bannedPokemon);
                 }
                 for (Pokemon areaPk : inArea) {
-                    Pokemon picked = pickWildPowerLvlReplacement(localAllowed, areaPk, false, usedPks, 100);
+                    Pokemon picked = pickWildPowerLvlReplacement(localAllowed, areaPk, false, usedPks, 100, BSTRestriction);
                     while (picked.actuallyCosmetic) {
-                        picked = pickWildPowerLvlReplacement(localAllowed, areaPk, false, usedPks, 100);
+                        picked = pickWildPowerLvlReplacement(localAllowed, areaPk, false, usedPks, 100, BSTRestriction);
                     }
                     areaMap.put(areaPk, picked);
                     usedPks.add(picked);
@@ -1157,9 +1166,9 @@ public abstract class AbstractRomHandler implements RomHandler {
                 // Build area map using randoms
                 Map<Pokemon, Pokemon> areaMap = new TreeMap<>();
                 for (Pokemon areaPk : inArea) {
-                    Pokemon picked = pickEntirelyRandomPokemon(allowAltFormes, noLegendaries, area, banned);
+                    Pokemon picked = pickEntirelyRandomPokemon(allowAltFormes, noLegendaries, area, banned, BSTRestriction);
                     while (areaMap.containsValue(picked)) {
-                        picked = pickEntirelyRandomPokemon(allowAltFormes, noLegendaries, area, banned);
+                        picked = pickEntirelyRandomPokemon(allowAltFormes, noLegendaries, area, banned, BSTRestriction);
                     }
                     areaMap.put(areaPk, picked);
                 }
@@ -1337,6 +1346,7 @@ public abstract class AbstractRomHandler implements RomHandler {
         boolean allowAltFormes = settings.isAllowWildAltFormes();
         boolean banIrregularAltFormes = settings.isBanIrregularAltFormes();
         boolean abilitiesAreRandomized = settings.getAbilitiesMod() == Settings.AbilitiesMod.RANDOMIZE;
+        int BSTRestriction = maxWildBST;
 
         List<Pokemon> banned = this.bannedForWildEncounters();
         if (!abilitiesAreRandomized) {
@@ -1360,7 +1370,7 @@ public abstract class AbstractRomHandler implements RomHandler {
                         for (Encounter enc : area.encounters) {
                             boolean shouldRandomize = doesAnotherEncounterWithSamePokemonExistInArea(enc, area);
                             if (shouldRandomize) {
-                                enc.pokemon = pickEntirelyRandomPokemon(allowAltFormes, noLegendaries, area, banned);
+                                enc.pokemon = pickEntirelyRandomPokemon(allowAltFormes, noLegendaries, area, banned, BSTRestriction);
                                 setFormeForEncounter(enc, enc.pokemon);
                             }
                         }
@@ -1422,7 +1432,7 @@ public abstract class AbstractRomHandler implements RomHandler {
                     } else {
                         // Entirely random
                         for (Encounter enc : area.encounters) {
-                            enc.pokemon = pickEntirelyRandomPokemon(allowAltFormes, noLegendaries, area, banned);
+                            enc.pokemon = pickEntirelyRandomPokemon(allowAltFormes, noLegendaries, area, banned, BSTRestriction);
                             setFormeForEncounter(enc, enc.pokemon);
                         }
                     }
@@ -1451,7 +1461,7 @@ public abstract class AbstractRomHandler implements RomHandler {
                 if (catchEmAll) {
                     boolean shouldRandomize = doesAnotherEncounterWithSamePokemonExistInArea(enc, area);
                     if (shouldRandomize) {
-                        enc.pokemon = pickEntirelyRandomPokemon(allowAltFormes, noLegendaries, area, banned);
+                        enc.pokemon = pickEntirelyRandomPokemon(allowAltFormes, noLegendaries, area, banned, BSTRestriction);
                         setFormeForEncounter(enc, enc.pokemon);
                     }
                 } else if (typeThemed) {
@@ -1500,7 +1510,7 @@ public abstract class AbstractRomHandler implements RomHandler {
                     setFormeForEncounter(enc, enc.pokemon);
                 } else {
                     // Entirely random
-                    enc.pokemon = pickEntirelyRandomPokemon(allowAltFormes, noLegendaries, area, banned);
+                    enc.pokemon = pickEntirelyRandomPokemon(allowAltFormes, noLegendaries, area, banned, BSTRestriction);
                     setFormeForEncounter(enc, enc.pokemon);
                 }
                 crashThreshold = computeDexNavCrashThreshold(encountersInZone);
@@ -3961,6 +3971,7 @@ public abstract class AbstractRomHandler implements RomHandler {
         int[] customStarters = settings.getCustomStarters();
         boolean allowAltFormes = settings.isAllowStarterAltFormes();
         boolean banIrregularAltFormes = settings.isBanIrregularAltFormes();
+        int BSTRestriction = settings.getMaxStarterBST();
 
         List<Pokemon> romPokemon = getPokemonInclFormes()
                 .stream()
@@ -3983,9 +3994,9 @@ public abstract class AbstractRomHandler implements RomHandler {
             }
         }
         if (customStarters[0] - 1 == 0){
-            Pokemon pkmn = allowAltFormes ? randomPokemonInclFormes() : randomPokemon();
+            Pokemon pkmn = allowAltFormes ? randomPokemonInclFormes(BSTRestriction) : randomPokemon(BSTRestriction);
             while (pickedStarters.contains(pkmn) || banned.contains(pkmn) || pkmn.actuallyCosmetic) {
-                pkmn = allowAltFormes ? randomPokemonInclFormes() : randomPokemon();
+                pkmn = allowAltFormes ? randomPokemonInclFormes(BSTRestriction) : randomPokemon(BSTRestriction);
             }
             pickedStarters.add(pkmn);
         } else {
@@ -3993,9 +4004,9 @@ public abstract class AbstractRomHandler implements RomHandler {
             pickedStarters.add(pkmn1);
         }
         if (customStarters[1] - 1 == 0){
-            Pokemon pkmn = allowAltFormes ? randomPokemonInclFormes() : randomPokemon();
+            Pokemon pkmn = allowAltFormes ? randomPokemonInclFormes(BSTRestriction) : randomPokemon(BSTRestriction);
             while (pickedStarters.contains(pkmn) || banned.contains(pkmn) || pkmn.actuallyCosmetic) {
-                pkmn = allowAltFormes ? randomPokemonInclFormes() : randomPokemon();
+                pkmn = allowAltFormes ? randomPokemonInclFormes(BSTRestriction) : randomPokemon(BSTRestriction);
             }
             pickedStarters.add(pkmn);
         } else {
@@ -4007,9 +4018,9 @@ public abstract class AbstractRomHandler implements RomHandler {
             setStarters(pickedStarters);
         } else {
             if (customStarters[2] - 1 == 0){
-                Pokemon pkmn = allowAltFormes ? randomPokemonInclFormes() : randomPokemon();
+                Pokemon pkmn = allowAltFormes ? randomPokemonInclFormes(BSTRestriction) : randomPokemon(BSTRestriction);
                 while (pickedStarters.contains(pkmn) || banned.contains(pkmn) || pkmn.actuallyCosmetic) {
-                    pkmn = allowAltFormes ? randomPokemonInclFormes() : randomPokemon();
+                    pkmn = allowAltFormes ? randomPokemonInclFormes(BSTRestriction) : randomPokemon(BSTRestriction);
                 }
                 pickedStarters.add(pkmn);
             } else {
@@ -4036,6 +4047,7 @@ public abstract class AbstractRomHandler implements RomHandler {
         boolean abilitiesUnchanged = settings.getAbilitiesMod() == Settings.AbilitiesMod.UNCHANGED;
         boolean allowAltFormes = settings.isAllowStarterAltFormes();
         boolean banIrregularAltFormes = settings.isBanIrregularAltFormes();
+        int BSTRestriction = settings.getMaxStarterBST();
 
         int starterCount = starterCount();
         pickedStarters = new ArrayList<>();
@@ -4048,9 +4060,9 @@ public abstract class AbstractRomHandler implements RomHandler {
             banned.addAll(getIrregularFormes());
         }
         for (int i = 0; i < starterCount; i++) {
-            Pokemon pkmn = allowAltFormes ? randomPokemonInclFormes() : randomPokemon();
+            Pokemon pkmn = allowAltFormes ? randomPokemonInclFormes(BSTRestriction) : randomPokemon(BSTRestriction);
             while (pickedStarters.contains(pkmn) || banned.contains(pkmn) || pkmn.actuallyCosmetic) {
-                pkmn = allowAltFormes ? randomPokemonInclFormes() : randomPokemon();
+                pkmn = allowAltFormes ? randomPokemonInclFormes(BSTRestriction) : randomPokemon(BSTRestriction);
             }
             pickedStarters.add(pkmn);
         }
@@ -4111,7 +4123,7 @@ public abstract class AbstractRomHandler implements RomHandler {
         List<Pokemon> mainPokemonListBST =  new ArrayList<>(mainPokemonList);
         List<Pokemon> onlyLegendaryAltsListBST =  new ArrayList<>(onlyLegendaryAltsList);
         List<Pokemon> noLegendaryAltsListBST =  new ArrayList<>(noLegendaryAltsList);
-        if(maxStaticBST != -1)
+        if(maxStaticBST != 1000)
         {
 
             for(int i = 0; i < onlyLegendaryListBST.size(); i++)
@@ -5413,6 +5425,7 @@ public abstract class AbstractRomHandler implements RomHandler {
         boolean randomStats = settings.isRandomizeInGameTradesIVs();
         boolean randomItem = settings.isRandomizeInGameTradesItems();
         CustomNamesSet customNames = settings.getCustomNames();
+        int BSTRestriction = maxStaticBST; //this should probably be its own variable
 
         checkPokemonRestrictions();
         // Process trainer names
@@ -5455,9 +5468,9 @@ public abstract class AbstractRomHandler implements RomHandler {
         for (IngameTrade trade : trades) {
             // pick new given pokemon
             Pokemon oldgiven = trade.givenPokemon;
-            Pokemon given = this.randomPokemon();
+            Pokemon given = randomPokemon(BSTRestriction);
             while (usedGivens.contains(given)) {
-                given = this.randomPokemon();
+                given = randomPokemon(BSTRestriction);
             }
             usedGivens.add(given);
             trade.givenPokemon = given;
@@ -5468,9 +5481,9 @@ public abstract class AbstractRomHandler implements RomHandler {
                 trade.requestedPokemon = given;
             } else if (randomizeRequest) {
                 if (trade.requestedPokemon != null) {
-                    Pokemon request = this.randomPokemon();
+                    Pokemon request = randomPokemon(BSTRestriction);
                     while (usedRequests.contains(request) || request == given) {
-                        request = this.randomPokemon();
+                        request = randomPokemon(BSTRestriction);
                     }
                     usedRequests.add(request);
                     trade.requestedPokemon = request;
@@ -5568,6 +5581,7 @@ public abstract class AbstractRomHandler implements RomHandler {
         boolean allowAltFormes = settings.isEvosAllowAltFormes();
         boolean banIrregularAltFormes = settings.isBanIrregularAltFormes();
         boolean abilitiesAreRandomized = settings.getAbilitiesMod() == Settings.AbilitiesMod.RANDOMIZE;
+        int BSTRestriction = maxEvoBST;
 
         checkPokemonRestrictions();
         List<Pokemon> pokemonPool;
@@ -5578,14 +5592,14 @@ public abstract class AbstractRomHandler implements RomHandler {
         }
 
         // this stops pokemon that evolve into big mons from evolving if they exceed the maxBST.
-        if(maxEvoBST != -1)
+        if(BSTRestriction != 1000)
         {
             Pokemon pk = null;
             for(int i = 0; i < pokemonPool.size(); i++)
             {
                 pk = pokemonPool.get(i);
 
-                if(pk.getBST() > maxEvoBST)
+                if(pk.getBST() > BSTRestriction)
                 {
                     pokemonPool.remove(pk);
                     i--;
@@ -5597,7 +5611,7 @@ public abstract class AbstractRomHandler implements RomHandler {
                     for (int j = 0; j < pk.evolutionsFrom.size(); j++)
                     {
                         //is it's BST too high
-                        if(pk.evolutionsFrom.get(j).to.getBST() > maxEvoBST)
+                        if(pk.evolutionsFrom.get(j).to.getBST() > BSTRestriction)
                         {
                             pk.evolutionsFrom.clear();
                         }
@@ -5716,7 +5730,7 @@ public abstract class AbstractRomHandler implements RomHandler {
                         }
 
                         // Prevent evolution into a forbidden BST
-                        if(maxEvoBST != -1 && pk.getBST() > maxEvoBST)
+                        if(pk.getBST() > BSTRestriction)
                         {
                             continue;
                         }
@@ -6997,6 +7011,7 @@ public abstract class AbstractRomHandler implements RomHandler {
                                                boolean banIrregularAltFormes) {
         List<Pokemon> pickFrom;
         List<Pokemon> withoutBannedPokemon;
+        int BSTRestriction = maxTrainerBST;
 
         if (swapMegaEvos) {
             pickFrom = megaEvolutionsList
@@ -7089,20 +7104,20 @@ public abstract class AbstractRomHandler implements RomHandler {
                     filteredPickList = canPick;
                 }
                 //chosenPokemon = filteredPickList.get(this.random.nextInt(filteredPickList.size()));
-                chosenPokemon = getRandomPokemonFromList(filteredPickList);
+                chosenPokemon = getRandomPokemonFromList(filteredPickList, BSTRestriction);
             }
             return chosenPokemon;
         } else {
             if (wonderGuardAllowed) {
                 //return pickFrom.get(this.random.nextInt(pickFrom.size()));
-                return getRandomPokemonFromList(pickFrom);
+                return getRandomPokemonFromList(pickFrom, BSTRestriction);
             } else {
                 //Pokemon pk = pickFrom.get(this.random.nextInt(pickFrom.size()));
-                Pokemon pk = getRandomPokemonFromList(pickFrom);
+                Pokemon pk = getRandomPokemonFromList(pickFrom, BSTRestriction);
                 while (pk.ability1 == Abilities.wonderGuard
                         || pk.ability2 == Abilities.wonderGuard
                         || pk.ability3 == Abilities.wonderGuard) {
-                    pk = getRandomPokemonFromList(pickFrom);
+                    pk = getRandomPokemonFromList(pickFrom, BSTRestriction);
                     //pk = pickFrom.get(this.random.nextInt(pickFrom.size()));
                 }
                 return pk;
@@ -7111,13 +7126,20 @@ public abstract class AbstractRomHandler implements RomHandler {
     }
 
     private Pokemon pickWildPowerLvlReplacement(List<Pokemon> pokemonPool, Pokemon current, boolean banSamePokemon,
-            List<Pokemon> usedUp, int bstBalanceLevel) {
+            List<Pokemon> usedUp, int bstBalanceLevel, int BSTRestriction) {
         // start with within 10% and add 5% either direction till we find
         // something
         int balancedBST = bstBalanceLevel * 10 + 250;
         int currentBST = Math.min(current.bstForPowerLevels(), balancedBST);
         int minTarget = currentBST - currentBST / 10;
         int maxTarget = currentBST + currentBST / 10;
+
+        if(maxTarget > BSTRestriction)
+        {
+            maxTarget = BSTRestriction;
+        }
+
+
         List<Pokemon> canPick = new ArrayList<>();
         int expandRounds = 0;
         while (canPick.isEmpty() || (canPick.size() < 3 && expandRounds < 3)) {
@@ -7133,6 +7155,10 @@ public abstract class AbstractRomHandler implements RomHandler {
             expandRounds++;
         }
         return canPick.get(this.random.nextInt(canPick.size()));
+    }
+    private Pokemon pickWildPowerLvlReplacement(List<Pokemon> pokemonPool, Pokemon current, boolean banSamePokemon,
+                                                List<Pokemon> usedUp, int bstBalanceLevel) {
+        return pickWildPowerLvlReplacement(pokemonPool, current, banSamePokemon, usedUp, bstBalanceLevel, 1000);
     }
 
     private void setFormeForEncounter(Encounter enc, Pokemon pk) {
@@ -7164,27 +7190,30 @@ public abstract class AbstractRomHandler implements RomHandler {
         return zonesToEncounters;
     }
 
-    public Pokemon pickEntirelyRandomPokemon(boolean includeFormes, boolean noLegendaries, EncounterSet area, List<Pokemon> banned) {
+    public Pokemon pickEntirelyRandomPokemon(boolean includeFormes, boolean noLegendaries, EncounterSet area, List<Pokemon> banned, int BSTRestriction) {
         Pokemon result;
-        Pokemon randomNonLegendaryPokemon = includeFormes ? randomNonLegendaryPokemonInclFormes() : randomNonLegendaryPokemon();
-        Pokemon randomPokemon = includeFormes ? randomPokemonInclFormes() : randomPokemon();
+        Pokemon randomNonLegendaryPokemon = includeFormes ? randomNonLegendaryPokemonInclFormes(BSTRestriction) : randomNonLegendaryPokemon(BSTRestriction);
+        Pokemon randomPokemon = includeFormes ? randomPokemonInclFormes(BSTRestriction) : randomPokemon(BSTRestriction);
         result = noLegendaries ? randomNonLegendaryPokemon : randomPokemon;
         while (result.actuallyCosmetic) {
-            randomNonLegendaryPokemon = includeFormes ? randomNonLegendaryPokemonInclFormes() : randomNonLegendaryPokemon();
-            randomPokemon = includeFormes ? randomPokemonInclFormes() : randomPokemon();
+            randomNonLegendaryPokemon = includeFormes ? randomNonLegendaryPokemonInclFormes(BSTRestriction) : randomNonLegendaryPokemon(BSTRestriction);
+            randomPokemon = includeFormes ? randomPokemonInclFormes(BSTRestriction) : randomPokemon(BSTRestriction);
             result = noLegendaries ? randomNonLegendaryPokemon : randomPokemon;
         }
         while (banned.contains(result) || area.bannedPokemon.contains(result)) {
-            randomNonLegendaryPokemon = includeFormes ? randomNonLegendaryPokemonInclFormes() : randomNonLegendaryPokemon();
-            randomPokemon = includeFormes ? randomPokemonInclFormes() : randomPokemon();
+            randomNonLegendaryPokemon = includeFormes ? randomNonLegendaryPokemonInclFormes(BSTRestriction) : randomNonLegendaryPokemon(BSTRestriction);
+            randomPokemon = includeFormes ? randomPokemonInclFormes(BSTRestriction) : randomPokemon(BSTRestriction);
             result = noLegendaries ? randomNonLegendaryPokemon : randomPokemon;
             while (result.actuallyCosmetic) {
-                randomNonLegendaryPokemon = includeFormes ? randomNonLegendaryPokemonInclFormes() : randomNonLegendaryPokemon();
-                randomPokemon = includeFormes ? randomPokemonInclFormes() : randomPokemon();
+                randomNonLegendaryPokemon = includeFormes ? randomNonLegendaryPokemonInclFormes(BSTRestriction) : randomNonLegendaryPokemon(BSTRestriction);
+                randomPokemon = includeFormes ? randomPokemonInclFormes(BSTRestriction) : randomPokemon(BSTRestriction);
                 result = noLegendaries ? randomNonLegendaryPokemon : randomPokemon;
             }
         }
         return result;
+    }
+    public Pokemon pickEntirelyRandomPokemon(boolean includeFormes, boolean noLegendaries, EncounterSet area, List<Pokemon> banned) {
+        return pickEntirelyRandomPokemon(includeFormes, noLegendaries, area, banned, 1000);
     }
 
     private Pokemon pickStaticPowerLvlReplacement(List<Pokemon> pokemonPool, Pokemon current, boolean banSamePokemon,

@@ -1694,11 +1694,11 @@ public class NewRandomizerGUI {
         puBanBadItemsCheckBox.setSelected(settings.isBanBadRandomPickupItems());
 
         //TODO change the 0 to the lowest BST in Seed. Randomiser gets stuck in loop if all pokemon are eliminated
-        miscMaxStarterBSTSpinner.setValue(settings.getMaxStarterBST() > 0 ? settings.getMaxStarterBST() : 0);
-        miscMaxStaticBSTSpinner.setValue(settings.getMaxStaticBST() > 0 ? settings.getMaxStaticBST() : 0);
-        miscMaxTrainerBSTSpinner.setValue(settings.getMaxTrainerBST() > 0 ? settings.getMaxTrainerBST() : 0);
-        miscMaxWildBSTSpinner.setValue(settings.getMaxWildBST() > 0 ? settings.getMaxWildBST() : 0);
-        miscMaxEvoBSTSpinner.setValue(settings.getMaxEvoBST() > 0 ? settings.getMaxEvoBST() : 0);
+        miscMaxStarterBSTSpinner.setValue(settings.getMaxStarterBST() < 1000 ? settings.getMaxStarterBST() : 1000);
+        miscMaxStaticBSTSpinner.setValue(settings.getMaxStaticBST() < 1000 ? settings.getMaxStaticBST() : 1000);
+        miscMaxTrainerBSTSpinner.setValue(settings.getMaxTrainerBST() < 1000 ? settings.getMaxTrainerBST() : 1000);
+        miscMaxWildBSTSpinner.setValue(settings.getMaxWildBST() < 1000 ? settings.getMaxWildBST() : 1000);
+        miscMaxEvoBSTSpinner.setValue(settings.getMaxEvoBST() < 1000 ? settings.getMaxEvoBST() : 1000);
 
         int mtsSelected = settings.getCurrentMiscTweaks();
         int mtCount = MiscTweak.allTweaks.size();
@@ -1897,12 +1897,13 @@ public class NewRandomizerGUI {
         settings.setPickupItemsMod(puUnchangedRadioButton.isSelected(), puRandomRadioButton.isSelected());
         settings.setBanBadRandomPickupItems(puBanBadItemsCheckBox.isSelected());
 
-        //TODO change the 0 to the lowest BST in Seed. Randomiser gets stuck in loop if all pokemon are eliminated
-        settings.setMaxStarterBST(miscMaxStarterBSTSpinner.isVisible() && (int) miscMaxStarterBSTSpinner.getValue() > 0 ? (int) miscMaxStarterBSTSpinner.getValue() : 0);
-        settings.setMaxStaticBST(miscMaxStaticBSTSpinner.isVisible() && (int) miscMaxStaticBSTSpinner.getValue() > 0 ? (int) miscMaxStaticBSTSpinner.getValue() : 0);
-        settings.setMaxWildBST(miscMaxWildBSTSpinner.isVisible() && (int) miscMaxWildBSTSpinner.getValue() > 0 ? (int) miscMaxWildBSTSpinner.getValue() : 0);
-        settings.setMaxTrainerBST(miscMaxTrainerBSTSpinner.isVisible() && (int) miscMaxTrainerBSTSpinner.getValue() > 0 ? (int) miscMaxTrainerBSTSpinner.getValue() : 0);
-        settings.setMaxEvoBST(miscMaxEvoBSTSpinner.isVisible() && (int) miscMaxEvoBSTSpinner.getValue() > 0 ? (int) miscMaxEvoBSTSpinner.getValue() : 0);
+        //TODO change the 1000 to the Highest BST in Seed. Randomiser gets stuck in loop if all pokemon are eliminated
+        //TODO check is the isVisible check is needed
+        settings.setMaxStarterBST(miscMaxStarterBSTSpinner.isVisible() && (int) miscMaxStarterBSTSpinner.getValue()  < 1000 ? (int) miscMaxStarterBSTSpinner.getValue() : 1000);
+        settings.setMaxStaticBST(miscMaxStaticBSTSpinner.isVisible() && (int) miscMaxStaticBSTSpinner.getValue()  < 1000 ? (int) miscMaxStaticBSTSpinner.getValue() : 1000);
+        settings.setMaxWildBST(miscMaxWildBSTSpinner.isVisible() && (int) miscMaxWildBSTSpinner.getValue()  < 1000 ? (int) miscMaxWildBSTSpinner.getValue() : 1000);
+        settings.setMaxTrainerBST(miscMaxTrainerBSTSpinner.isVisible() && (int) miscMaxTrainerBSTSpinner.getValue()  < 1000 ? (int) miscMaxTrainerBSTSpinner.getValue() : 1000);
+        settings.setMaxEvoBST(miscMaxEvoBSTSpinner.isVisible() && (int) miscMaxEvoBSTSpinner.getValue()  < 1000 ? (int) miscMaxEvoBSTSpinner.getValue() : 1000);
 
         int currentMiscTweaks = 0;
         int mtCount = MiscTweak.allTweaks.size();
@@ -2676,27 +2677,27 @@ public class NewRandomizerGUI {
         mtNoneAvailableLabel.setVisible(false);
         miscMaxStarterBSTSpinner.setVisible(true);
         miscMaxStarterBSTSpinner.setEnabled(true);
-        miscMaxStarterBSTSpinner.setValue(-1);
+        miscMaxStarterBSTSpinner.setValue(1000);
         miscMaxStarterBSTLabel.setVisible(true);
 
         miscMaxStaticBSTSpinner.setVisible(true);
         miscMaxStaticBSTSpinner.setEnabled(true);
-        miscMaxStaticBSTSpinner.setValue(-1);
+        miscMaxStaticBSTSpinner.setValue(1000);
         miscMaxStaticBSTLabel.setVisible(true);
 
         miscMaxTrainerBSTSpinner.setVisible(true);
         miscMaxTrainerBSTSpinner.setEnabled(true);
-        miscMaxTrainerBSTSpinner.setValue(-1);
+        miscMaxTrainerBSTSpinner.setValue(1000);
         miscMaxTrainerBSTLabel.setVisible(true);
 
         miscMaxWildBSTSpinner.setVisible(true);
         miscMaxWildBSTSpinner.setEnabled(true);
-        miscMaxWildBSTSpinner.setValue(-1);
+        miscMaxWildBSTSpinner.setValue(1000);
         miscMaxWildBSTLabel.setVisible(true);
 
         miscMaxEvoBSTSpinner.setVisible(true);
         miscMaxEvoBSTSpinner.setEnabled(true);
-        miscMaxEvoBSTSpinner.setValue(-1);
+        miscMaxEvoBSTSpinner.setValue(1000);
         miscMaxEvoBSTLabel.setVisible(true);
 
         liveTweaksPanel.setVisible(false);

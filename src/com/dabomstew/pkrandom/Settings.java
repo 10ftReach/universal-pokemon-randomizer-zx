@@ -314,11 +314,11 @@ public class Settings {
         UNCHANGED, RANDOM
     }
 
-    private int maxStarterBST = 0;
-    private int maxStaticBST = 0;
-    private int maxTrainerBST = 0;
-    private int maxWildBST = 0;
-    private int maxEvoBST = 0;
+    private int maxStarterBST = 1000;
+    private int maxStaticBST = 1000;
+    private int maxWildBST = 1000;
+    private int maxTrainerBST = 1000;
+    private int maxEvoBST = 1000;
 
     private PickupItemsMod pickupItemsMod = PickupItemsMod.UNCHANGED;
     private boolean banBadRandomPickupItems;
@@ -605,11 +605,11 @@ public class Settings {
                     break;
                 case 2:
                     //59-62 starter Pokemon BST cap
-                    BSTCap = maxTrainerBST;
+                    BSTCap = maxWildBST;
                     break;
                 case 3:
                     //63-66 starter Pokemon BST cap
-                    BSTCap = maxWildBST;
+                    BSTCap = maxTrainerBST;
                     break;
                 case 4:
                     //67-70 starter Pokemon BST cap
