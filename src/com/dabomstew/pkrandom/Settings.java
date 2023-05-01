@@ -49,7 +49,7 @@ public class Settings {
 
     public static final int VERSION = Version.VERSION;
 
-    public static final int LENGTH_OF_SETTINGS_DATA = 51;
+    public static final int LENGTH_OF_SETTINGS_DATA = 71;
 
     private CustomNamesSet customNames;
 
@@ -313,6 +313,12 @@ public class Settings {
     public enum PickupItemsMod {
         UNCHANGED, RANDOM
     }
+
+    private int maxStarterBST = 1000;
+    private int maxStaticBST = 1000;
+    private int maxWildBST = 1000;
+    private int maxTrainerBST = 1000;
+    private int maxEvoBST = 1000;
 
     private PickupItemsMod pickupItemsMod = PickupItemsMod.UNCHANGED;
     private boolean banBadRandomPickupItems;
@@ -581,6 +587,61 @@ public class Settings {
 
         // 50 elite four unique pokemon (3 bits) + catch rate level (3 bits)
         out.write(eliteFourUniquePokemonNumber | ((minimumCatchRateLevel - 1) << 3));
+
+        //56-59 starter Pokemon BST cap
+        int BSTCap = maxStarterBST;
+
+        for(int i = 0; i < 5; i++)
+        {
+            switch(i)
+            {
+                case 0:
+                    //51-54 starter Pokemon BST cap
+                    BSTCap = maxStarterBST;
+                    break;
+                case 1:
+                    //55-58 starter Pokemon BST cap
+                    BSTCap = maxStaticBST;
+                    break;
+                case 2:
+                    //59-62 starter Pokemon BST cap
+                    BSTCap = maxWildBST;
+                    break;
+                case 3:
+                    //63-66 starter Pokemon BST cap
+                    BSTCap = maxTrainerBST;
+                    break;
+                case 4:
+                    //67-70 starter Pokemon BST cap
+                    BSTCap = maxEvoBST;
+                    break;
+            }
+
+            if(BSTCap == -1)
+            {
+                out.write(0);
+                out.write(0);
+                out.write(0);
+                out.write(0);
+            }
+            else
+            {
+                for(int j = 0; j < 4; j++)
+                {
+                    if(BSTCap > 255)
+                    {
+                        out.write(255);
+                        BSTCap = BSTCap - 255;
+                    }
+                    else {
+                        out.write(BSTCap);
+                        BSTCap = 0;
+                    }
+                }
+            }
+        }
+
+
 
         try {
             byte[] romName = this.romName.getBytes("US-ASCII");
@@ -870,6 +931,40 @@ public class Settings {
 
         settings.setEliteFourUniquePokemonNumber(data[50] & 0x7);
         settings.setMinimumCatchRateLevel(((data[50] & 0x38) >> 3) + 1);
+
+        int BSTCounter = 0;
+        int dataIndex = 51;
+        for(int i = 0; i < 5; i++)
+        {
+            BSTCounter = 0;
+            dataIndex = 51 + (i * 4);
+
+            for(int j = 0; j < 4; j++)
+            {
+                int currentDataIndex = dataIndex + j;
+
+                BSTCounter = BSTCounter + (data[currentDataIndex] < 0 ? data[currentDataIndex] + 256 : data[currentDataIndex]);
+            }
+
+            switch(i)
+            {
+                case 0:
+                    settings.setMaxStarterBST(BSTCounter);
+                    break;
+                case 1:
+                    settings.setMaxStaticBST(BSTCounter);
+                    break;
+                case 2:
+                    settings.setMaxWildBST(BSTCounter);
+                    break;
+                case 3:
+                    settings.setMaxTrainerBST(BSTCounter);
+                    break;
+                case 4:
+                    settings.setMaxEvoBST(BSTCounter);
+                    break;
+            }
+        }
 
         int romNameLength = data[LENGTH_OF_SETTINGS_DATA] & 0xFF;
         String romName = new String(data, LENGTH_OF_SETTINGS_DATA + 1, romNameLength, "US-ASCII");
@@ -2302,6 +2397,56 @@ public class Settings {
 
     public void setBanBadRandomPickupItems(boolean banBadRandomPickupItems) {
         this.banBadRandomPickupItems = banBadRandomPickupItems;
+    }
+
+    public void setMaxStarterBST(int maxStarterBST)
+    {
+        this.maxStarterBST = maxStarterBST;
+    }
+
+    public int getMaxStarterBST()
+    {
+        return maxStarterBST;
+    }
+
+    public void setMaxStaticBST(int maxStaticBST)
+    {
+        this.maxStaticBST = maxStaticBST;
+    }
+
+    public int getMaxStaticBST()
+    {
+        return maxStaticBST;
+    }
+
+    public void setMaxTrainerBST(int maxTrainerBST)
+    {
+        this.maxTrainerBST = maxTrainerBST;
+    }
+
+    public int getMaxTrainerBST()
+    {
+        return maxTrainerBST;
+    }
+
+    public void setMaxWildBST(int maxWildBST)
+    {
+        this.maxWildBST = maxWildBST;
+    }
+
+    public int getMaxWildBST()
+    {
+        return maxWildBST;
+    }
+
+    public void setMaxEvoBST(int maxEvoBST)
+    {
+        this.maxEvoBST = maxEvoBST;
+    }
+
+    public int getMaxEvoBST()
+    {
+        return maxEvoBST;
     }
 
     private static int makeByteSelected(boolean... bools) {
