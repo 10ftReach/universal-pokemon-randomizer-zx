@@ -200,8 +200,7 @@ public class Pokemon implements Comparable<Pokemon> {
         return hp + attack + defense + spatk + spdef + speed;
     }
 
-    //bst() is protected instead of public, so I made this function instead. check BST() usage and adjust accordingly
-    //Maybe should use bstForPowerLevels instead for shed exception
+    //TODO: bst() is protected instead of public, so I made this function instead. check BST() usage and adjust accordingly
     public int getBST()
     {
         return bst();
