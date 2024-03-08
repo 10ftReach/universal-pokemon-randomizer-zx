@@ -701,6 +701,37 @@ public abstract class AbstractRomHandler implements RomHandler {
         }
     }
 
+    private int pickRandomAbilityVariation(int selectedAbility, int... alreadySetAbilities) {
+        int newAbility = selectedAbility;
+
+        while (true) {
+            Map<Integer, List<Integer>> abilityVariations = getAbilityVariations();
+            for (int baseAbility: abilityVariations.keySet()) {
+                if (selectedAbility == baseAbility) {
+                    List<Integer> variationsForThisAbility = abilityVariations.get(selectedAbility);
+                    newAbility = variationsForThisAbility.get(this.random.nextInt(variationsForThisAbility.size()));
+                    break;
+                }
+            }
+
+            boolean repeat = false;
+            for (int alreadySetAbility : alreadySetAbilities) {
+                if (alreadySetAbility == newAbility) {
+                    repeat = true;
+                    break;
+                }
+            }
+
+            if (!repeat) {
+                break;
+            }
+
+
+        }
+
+        return newAbility;
+    }
+
     private int pickRandomAbility(int maxAbility, List<Integer> bannedAbilities, boolean useVariations,
                                   int... alreadySetAbilities) {
         int newAbility;
@@ -722,14 +753,7 @@ public abstract class AbstractRomHandler implements RomHandler {
 
             if (!repeat) {
                 if (useVariations) {
-                    Map<Integer,List<Integer>> abilityVariations = getAbilityVariations();
-                    for (int baseAbility: abilityVariations.keySet()) {
-                        if (newAbility == baseAbility) {
-                            List<Integer> variationsForThisAbility = abilityVariations.get(newAbility);
-                            newAbility = variationsForThisAbility.get(this.random.nextInt(variationsForThisAbility.size()));
-                            break;
-                        }
-                    }
+                    newAbility = pickRandomAbilityVariation(newAbility, alreadySetAbilities);
                 }
                 break;
             }
@@ -5412,7 +5436,7 @@ public abstract class AbstractRomHandler implements RomHandler {
 
         Collections.shuffle(newItems, this.random);
         Collections.shuffle(newTMs, this.random);
-
+        
         this.setRegularFieldItems(newItems);
         this.setFieldTMs(newTMs);
     }
